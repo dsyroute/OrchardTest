@@ -1,0 +1,64 @@
+@page "/loesungen/{Slug}"
+@rendermode InteractiveServer
+@using YRoute.Web.Components.Shared
+@using YRoute.Web.Services
+@inject SolutionsApiClient SolutionsClient
+
+<PageTitle>@(_solution?.Title ?? "Lösung") – YRoute</PageTitle>
+
+<LoadingSpinner IsLoading="_isLoading" />
+<ErrorMessage Message="_errorMessage" />
+
+@if (_solution is not null)
+{
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/loesungen">Lösungen</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@_solution.Title</li>
+        </ol>
+    </nav>
+
+    <article>
+        <h1 class="mb-3">@_solution.Title</h1>
+        <p class="lead text-muted">@_solution.Summary</p>
+
+        @if (_solution.ImageUrls.Count > 0)
+        {
+            <img src="@_solution.ImageUrls[0]" class="img-fluid rounded mb-4" alt="@_solution.Title" />
+        }
+
+        @foreach (var tag in _solution.Tags)
+        {
+            <span class="badge bg-secondary me-1">@tag</span>
+        }
+
+        <div class="mt-4">
+            @((MarkupString)_solution.Content)
+        </div>
+    </article>
+}
+
+@code {
+    [Parameter] public string Slug { get; set; } = string.Empty;
+
+    private YRoute.Web.Services.SolutionDetail? _solution;
+    private bool _isLoading = true;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _solution = await SolutionsClient.GetSolutionBySlugAsync(Slug);
+            if (_solution is null) _errorMessage = "Lösung nicht gefunden.";
+        }
+        catch
+        {
+            _errorMessage = "Lösung konnte nicht geladen werden.";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

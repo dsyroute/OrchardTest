@@ -1,0 +1,77 @@
+@page "/wiki"
+@rendermode InteractiveServer
+@using YRoute.Web.Components.Shared
+@using YRoute.Web.Services
+@inject WikiApiClient WikiClient
+
+<PageTitle>Wiki – YRoute</PageTitle>
+
+<h1 class="mb-4">Wiki / Knowledge Base</h1>
+
+<SearchBar Placeholder="Artikel suchen..."
+           Value="@_searchTerm"
+           OnValueChanged="v => _searchTerm = v"
+           OnSearchClicked="LoadData" />
+
+<LoadingSpinner IsLoading="_isLoading" />
+<ErrorMessage Message="_errorMessage" />
+
+@if (!_isLoading && _articles is not null)
+{
+    <div class="list-group mt-3">
+        @foreach (var article in _articles.Items)
+        {
+            <a href="/wiki/@article.Slug" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">@article.Title</h5>
+                    <small class="text-muted">@article.UpdatedAt.ToString("dd.MM.yyyy")</small>
+                </div>
+                <p class="mb-1 text-muted">@article.Summary</p>
+                @foreach (var tag in article.Tags)
+                {
+                    <span class="badge bg-secondary me-1">@tag</span>
+                }
+            </a>
+        }
+    </div>
+
+    <div class="mt-4">
+        <Pagination CurrentPage="_currentPage"
+                    TotalPages="_articles.TotalPages"
+                    OnPageChanged="GoToPage" />
+    </div>
+}
+
+@code {
+    private YRoute.Shared.Contracts.PagedResult<WikiArticleSummary>? _articles;
+    private bool _isLoading = true;
+    private string? _errorMessage;
+    private string _searchTerm = string.Empty;
+    private int _currentPage = 1;
+
+    protected override async Task OnInitializedAsync() => await LoadData();
+
+    private async Task LoadData()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+        try
+        {
+            _articles = await WikiClient.GetArticlesAsync(_currentPage, 20, _searchTerm);
+        }
+        catch
+        {
+            _errorMessage = "Artikel konnten nicht geladen werden.";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task GoToPage(int page)
+    {
+        _currentPage = page;
+        await LoadData();
+    }
+}

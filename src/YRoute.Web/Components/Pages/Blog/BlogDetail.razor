@@ -1,0 +1,71 @@
+@page "/blog/{Slug}"
+@rendermode InteractiveServer
+@using YRoute.Web.Components.Shared
+@using YRoute.Web.Services
+@inject BlogApiClient BlogClient
+
+<PageTitle>@(_post?.Title ?? "Blog") – YRoute</PageTitle>
+
+<LoadingSpinner IsLoading="_isLoading" />
+<ErrorMessage Message="_errorMessage" />
+
+@if (_post is not null)
+{
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/blog">Blog</a></li>
+            <li class="breadcrumb-item active">@_post.Title</li>
+        </ol>
+    </nav>
+
+    <article>
+        @if (!string.IsNullOrEmpty(_post.CoverImageUrl))
+        {
+            <img src="@_post.CoverImageUrl" class="img-fluid rounded mb-4" alt="@_post.Title" />
+        }
+
+        <h1 class="mb-2">@_post.Title</h1>
+
+        <p class="text-muted mb-4">
+            von <strong>@_post.AuthorName</strong>
+            @if (_post.PublishedAt.HasValue)
+            {
+                <span> · @_post.PublishedAt.Value.ToString("dd. MMMM yyyy")</span>
+            }
+        </p>
+
+        @foreach (var tag in _post.Tags)
+        {
+            <span class="badge bg-secondary me-1 mb-3">@tag</span>
+        }
+
+        <div class="mt-3">
+            @((MarkupString)_post.Content)
+        </div>
+    </article>
+}
+
+@code {
+    [Parameter] public string Slug { get; set; } = string.Empty;
+
+    private BlogPostDetail? _post;
+    private bool _isLoading = true;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _post = await BlogClient.GetPostBySlugAsync(Slug);
+            if (_post is null) _errorMessage = "Beitrag nicht gefunden.";
+        }
+        catch
+        {
+            _errorMessage = "Beitrag konnte nicht geladen werden.";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

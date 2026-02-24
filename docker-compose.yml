@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  # PostgreSQL for Orchard Core CMS
+  postgres:
+    image: postgres:16-alpine
+    container_name: yrouteorchard-postgres
+    environment:
+      POSTGRES_DB: yrouteorchard
+      POSTGRES_USER: yrouteuser
+      POSTGRES_PASSWORD: yroutepass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U yrouteuser -d yrouteorchard"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MongoDB for YWiki, YBlog, YSolutions microservices
+  mongodb:
+    image: mongo:7-jammy
+    container_name: yroute-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: yroutemongo
+      MONGO_INITDB_ROOT_PASSWORD: yroutemongopass
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  mongo_data:

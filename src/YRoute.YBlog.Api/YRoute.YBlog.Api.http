@@ -1,0 +1,6 @@
+@YRoute.YBlog.Api_HostAddress = http://localhost:5240
+
+GET {{YRoute.YBlog.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

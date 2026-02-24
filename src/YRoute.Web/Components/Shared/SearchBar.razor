@@ -1,0 +1,33 @@
+@namespace YRoute.Web.Components.Shared
+
+<div class="search-bar d-flex gap-2">
+    <input type="search"
+           class="form-control"
+           placeholder="@Placeholder"
+           value="@Value"
+           @oninput="OnInput"
+           @onkeydown="OnKeyDown" />
+    <button class="btn btn-primary" @onclick="OnSearch">
+        <span>Suchen</span>
+    </button>
+</div>
+
+@code {
+    [Parameter] public string Value { get; set; } = string.Empty;
+    [Parameter] public string Placeholder { get; set; } = "Suchen...";
+    [Parameter] public EventCallback<string> OnValueChanged { get; set; }
+    [Parameter] public EventCallback OnSearchClicked { get; set; }
+
+    private async Task OnInput(ChangeEventArgs e)
+    {
+        Value = e.Value?.ToString() ?? string.Empty;
+        await OnValueChanged.InvokeAsync(Value);
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") await OnSearch();
+    }
+
+    private async Task OnSearch() => await OnSearchClicked.InvokeAsync();
+}

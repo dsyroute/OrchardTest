@@ -1,0 +1,85 @@
+@page "/loesungen"
+@rendermode InteractiveServer
+@using YRoute.Web.Components.Shared
+@using YRoute.Web.Services
+@inject SolutionsApiClient SolutionsClient
+
+<PageTitle>Lösungen – YRoute</PageTitle>
+
+<h1 class="mb-4">Unsere Lösungen</h1>
+
+<SearchBar Placeholder="Lösung suchen..."
+           Value="@_searchTerm"
+           OnValueChanged="v => _searchTerm = v"
+           OnSearchClicked="LoadData" />
+
+<LoadingSpinner IsLoading="_isLoading" />
+<ErrorMessage Message="_errorMessage" />
+
+@if (!_isLoading && _solutions is not null)
+{
+    <div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
+        @foreach (var solution in _solutions.Items)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    @if (solution.ImageUrls.Count > 0)
+                    {
+                        <img src="@solution.ImageUrls[0]" class="card-img-top" alt="@solution.Title" style="height:180px;object-fit:cover;">
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@solution.Title</h5>
+                        <p class="card-text text-muted">@solution.Summary</p>
+                        @foreach (var tag in solution.Tags)
+                        {
+                            <span class="badge bg-secondary me-1">@tag</span>
+                        }
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="/loesungen/@solution.Slug" class="btn btn-outline-primary btn-sm">Details</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="mt-4">
+        <Pagination CurrentPage="_currentPage"
+                    TotalPages="_solutions.TotalPages"
+                    OnPageChanged="GoToPage" />
+    </div>
+}
+
+@code {
+    private YRoute.Shared.Contracts.PagedResult<SolutionSummary>? _solutions;
+    private bool _isLoading = true;
+    private string? _errorMessage;
+    private string _searchTerm = string.Empty;
+    private int _currentPage = 1;
+
+    protected override async Task OnInitializedAsync() => await LoadData();
+
+    private async Task LoadData()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+        try
+        {
+            _solutions = await SolutionsClient.GetSolutionsAsync(_currentPage, 12, _searchTerm);
+        }
+        catch
+        {
+            _errorMessage = "Lösungen konnten nicht geladen werden.";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task GoToPage(int page)
+    {
+        _currentPage = page;
+        await LoadData();
+    }
+}

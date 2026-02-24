@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/YRoute.OrchardHost/YRoute.OrchardHost.csproj" />
+    <Project Path="src/YRoute.Shared/YRoute.Shared.csproj" />
+    <Project Path="src/YRoute.Web/YRoute.Web.csproj" />
+    <Project Path="src/YRoute.YBlog.Api/YRoute.YBlog.Api.csproj" />
+    <Project Path="src/YRoute.YSolutions.Api/YRoute.YSolutions.Api.csproj" />
+    <Project Path="src/YRoute.YWiki.Api/YRoute.YWiki.Api.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,87 @@
+@page "/blog"
+@rendermode InteractiveServer
+@using YRoute.Web.Components.Shared
+@using YRoute.Web.Services
+@inject BlogApiClient BlogClient
+
+<PageTitle>Blog – YRoute</PageTitle>
+
+<h1 class="mb-4">Blog</h1>
+
+<SearchBar Placeholder="Beitrag suchen..."
+           Value="@_searchTerm"
+           OnValueChanged="v => _searchTerm = v"
+           OnSearchClicked="LoadData" />
+
+<LoadingSpinner IsLoading="_isLoading" />
+<ErrorMessage Message="_errorMessage" />
+
+@if (!_isLoading && _posts is not null)
+{
+    <div class="row row-cols-1 row-cols-md-2 g-4 mt-3">
+        @foreach (var post in _posts.Items)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    @if (!string.IsNullOrEmpty(post.CoverImageUrl))
+                    {
+                        <img src="@post.CoverImageUrl" class="card-img-top" alt="@post.Title" style="height:200px;object-fit:cover;">
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@post.Title</h5>
+                        <p class="card-text text-muted">@post.Excerpt</p>
+                        <small class="text-muted">von @post.AuthorName
+                            @if (post.PublishedAt.HasValue)
+                            {
+                                <span> · @post.PublishedAt.Value.ToString("dd.MM.yyyy")</span>
+                            }
+                        </small>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="/blog/@post.Slug" class="btn btn-outline-primary btn-sm">Weiterlesen</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="mt-4">
+        <Pagination CurrentPage="_currentPage"
+                    TotalPages="_posts.TotalPages"
+                    OnPageChanged="GoToPage" />
+    </div>
+}
+
+@code {
+    private YRoute.Shared.Contracts.PagedResult<BlogPostSummary>? _posts;
+    private bool _isLoading = true;
+    private string? _errorMessage;
+    private string _searchTerm = string.Empty;
+    private int _currentPage = 1;
+
+    protected override async Task OnInitializedAsync() => await LoadData();
+
+    private async Task LoadData()
+    {
+        _isLoading = true;
+        _errorMessage = null;
+        try
+        {
+            _posts = await BlogClient.GetPostsAsync(_currentPage, 10, _searchTerm);
+        }
+        catch
+        {
+            _errorMessage = "Beiträge konnten nicht geladen werden.";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private async Task GoToPage(int page)
+    {
+        _currentPage = page;
+        await LoadData();
+    }
+}
