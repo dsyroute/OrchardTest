@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.17" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.4.0" />
     <PackageReference Include="OrchardCore.Application.Cms.Targets" Version="2.1.7" />
     <PackageReference Include="YesSql.Provider.PostgreSql" Version="5.3.0" />
   </ItemGroup>

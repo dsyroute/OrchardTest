@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "1peVx/L9vu8=",
+  "dgSpecHash": "vaWth2QsYZI=",
   "success": true,
   "projectFilePath": "/home/runner/work/OrchardTest/OrchardTest/src/YRoute.OrchardHost/YRoute.OrchardHost.csproj",
   "expectedPackageFiles": [
@@ -455,18 +455,5 @@
     "/home/runner/.nuget/packages/yessql.provider.sqlserver/5.3.0/yessql.provider.sqlserver.5.3.0.nupkg.sha512",
     "/home/runner/.nuget/packages/zstring/2.6.0/zstring.2.6.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1603",
-      "level": "Warning",
-      "message": "YRoute.OrchardHost depends on NLog.Web.AspNetCore (>= 5.3.17) but NLog.Web.AspNetCore 5.3.17 was not found. NLog.Web.AspNetCore 5.4.0 was resolved instead.",
-      "projectPath": "/home/runner/work/OrchardTest/OrchardTest/src/YRoute.OrchardHost/YRoute.OrchardHost.csproj",
-      "warningLevel": 1,
-      "filePath": "/home/runner/work/OrchardTest/OrchardTest/src/YRoute.OrchardHost/YRoute.OrchardHost.csproj",
-      "libraryId": "NLog.Web.AspNetCore",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    }
-  ]
+  "logs": []
 }
