@@ -1,0 +1,74 @@
+version: '3.9'
+
+# Override for local development - enables all services
+services:
+  ysolutions-api:
+    build:
+      context: .
+      dockerfile: src/YRoute.YSolutions.Api/Dockerfile
+    ports:
+      - "5101:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - MongoDB__ConnectionString=mongodb://yroutemongo:yroutemongopass@mongodb:27017
+      - MongoDB__DatabaseName=ysolutions
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  yblog-api:
+    build:
+      context: .
+      dockerfile: src/YRoute.YBlog.Api/Dockerfile
+    ports:
+      - "5102:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - MongoDB__ConnectionString=mongodb://yroutemongo:yroutemongopass@mongodb:27017
+      - MongoDB__DatabaseName=yblog
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  ywiki-api:
+    build:
+      context: .
+      dockerfile: src/YRoute.YWiki.Api/Dockerfile
+    ports:
+      - "5103:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - MongoDB__ConnectionString=mongodb://yroutemongo:yroutemongopass@mongodb:27017
+      - MongoDB__DatabaseName=ywiki
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  orchard-host:
+    build:
+      context: .
+      dockerfile: src/YRoute.OrchardHost/Dockerfile
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - OrchardCore__OrchardCore_AutoSetup__Tenants__0__DatabaseConnectionString=Host=postgres;Port=5432;Database=yrouteorchard;Username=yrouteuser;Password=yroutepass
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: src/YRoute.Web/Dockerfile
+    ports:
+      - "5200:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ApiUrls__YSolutions=http://ysolutions-api:8080/
+      - ApiUrls__YBlog=http://yblog-api:8080/
+      - ApiUrls__YWiki=http://ywiki-api:8080/
+    depends_on:
+      - ysolutions-api
+      - yblog-api
+      - ywiki-api
