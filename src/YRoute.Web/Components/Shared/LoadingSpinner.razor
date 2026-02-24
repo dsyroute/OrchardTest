@@ -1,0 +1,14 @@
+@namespace YRoute.Web.Components.Shared
+
+@if (IsLoading)
+{
+    <div class="d-flex justify-content-center my-4">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Laden...</span>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsLoading { get; set; }
+}

@@ -1,6 +1,23 @@
+using NLog.Web;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseNLog();
+
+builder.Services
+    .AddOrchardCms()
+    .AddSetupFeatures("OrchardCore.AutoSetup");
+
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseOrchardCore();
 
 app.Run();

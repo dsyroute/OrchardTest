@@ -1,11 +1,30 @@
 {
   "version": 3,
   "targets": {
-    "net8.0": {}
+    "net8.0": {
+      "YRoute.Shared/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/YRoute.Shared.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/YRoute.Shared.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "YRoute.Shared/1.0.0": {
+      "type": "project",
+      "path": "../YRoute.Shared/YRoute.Shared.csproj",
+      "msbuildProject": "../YRoute.Shared/YRoute.Shared.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net8.0": []
+    "net8.0": [
+      "YRoute.Shared >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "/home/runner/.nuget/packages/": {}
@@ -31,7 +50,11 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "/home/runner/work/OrchardTest/OrchardTest/src/YRoute.Shared/YRoute.Shared.csproj": {
+              "projectPath": "/home/runner/work/OrchardTest/OrchardTest/src/YRoute.Shared/YRoute.Shared.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

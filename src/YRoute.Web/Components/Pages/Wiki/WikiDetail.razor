@@ -1,0 +1,71 @@
+@page "/wiki/{Slug}"
+@rendermode InteractiveServer
+@using YRoute.Web.Components.Shared
+@using YRoute.Web.Services
+@inject WikiApiClient WikiClient
+
+<PageTitle>@(_article?.Title ?? "Wiki") – YRoute</PageTitle>
+
+<LoadingSpinner IsLoading="_isLoading" />
+<ErrorMessage Message="_errorMessage" />
+
+@if (_article is not null)
+{
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/wiki">Wiki</a></li>
+            <li class="breadcrumb-item active">@_article.Title</li>
+        </ol>
+    </nav>
+
+    <article>
+        <h1 class="mb-2">@_article.Title</h1>
+        <p class="text-muted">Revision @_article.CurrentRevisionNumber · Aktualisiert @_article.UpdatedAt.ToString("dd.MM.yyyy")</p>
+
+        @foreach (var tag in _article.Tags)
+        {
+            <span class="badge bg-secondary me-1 mb-3">@tag</span>
+        }
+
+        <div class="mt-3">
+            @((MarkupString)_article.Content)
+        </div>
+
+        @if (_article.RelatedSlugs.Count > 0)
+        {
+            <hr />
+            <h5>Verwandte Artikel</h5>
+            <ul>
+                @foreach (var slug in _article.RelatedSlugs)
+                {
+                    <li><a href="/wiki/@slug">@slug</a></li>
+                }
+            </ul>
+        }
+    </article>
+}
+
+@code {
+    [Parameter] public string Slug { get; set; } = string.Empty;
+
+    private WikiArticleDetail? _article;
+    private bool _isLoading = true;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _article = await WikiClient.GetArticleBySlugAsync(Slug);
+            if (_article is null) _errorMessage = "Artikel nicht gefunden.";
+        }
+        catch
+        {
+            _errorMessage = "Artikel konnte nicht geladen werden.";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

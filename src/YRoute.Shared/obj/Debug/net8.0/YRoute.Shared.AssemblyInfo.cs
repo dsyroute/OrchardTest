@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("YRoute.Shared")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cda95807833d224c69b1696ce364ce88e35ff361")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9bb1f2883e9efa9b7647d27e61804b40762f1e41")]
 [assembly: System.Reflection.AssemblyProductAttribute("YRoute.Shared")]
 [assembly: System.Reflection.AssemblyTitleAttribute("YRoute.Shared")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

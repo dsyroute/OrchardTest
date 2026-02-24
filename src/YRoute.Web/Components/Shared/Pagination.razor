@@ -1,0 +1,41 @@
+@namespace YRoute.Web.Components.Shared
+
+@if (TotalPages > 1)
+{
+    <nav aria-label="Seitennavigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(CurrentPage <= 1 ? "disabled" : "")">
+                <button class="page-link" @onclick="() => GoToPage(CurrentPage - 1)" disabled="@(CurrentPage <= 1)">
+                    &laquo;
+                </button>
+            </li>
+            @for (var i = StartPage; i <= EndPage; i++)
+            {
+                var pageNum = i;
+                <li class="page-item @(pageNum == CurrentPage ? "active" : "")">
+                    <button class="page-link" @onclick="() => GoToPage(pageNum)">@pageNum</button>
+                </li>
+            }
+            <li class="page-item @(CurrentPage >= TotalPages ? "disabled" : "")">
+                <button class="page-link" @onclick="() => GoToPage(CurrentPage + 1)" disabled="@(CurrentPage >= TotalPages)">
+                    &raquo;
+                </button>
+            </li>
+        </ul>
+    </nav>
+}
+
+@code {
+    [Parameter] public int CurrentPage { get; set; } = 1;
+    [Parameter] public int TotalPages { get; set; }
+    [Parameter] public EventCallback<int> OnPageChanged { get; set; }
+
+    private int StartPage => Math.Max(1, CurrentPage - 2);
+    private int EndPage => Math.Min(TotalPages, CurrentPage + 2);
+
+    private async Task GoToPage(int page)
+    {
+        if (page >= 1 && page <= TotalPages)
+            await OnPageChanged.InvokeAsync(page);
+    }
+}

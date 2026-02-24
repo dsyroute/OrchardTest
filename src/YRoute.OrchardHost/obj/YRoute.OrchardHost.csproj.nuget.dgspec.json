@@ -44,6 +44,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "NLog.Web.AspNetCore": {
+              "target": "Package",
+              "version": "[5.3.17, )"
+            },
             "OrchardCore.Application.Cms.Targets": {
               "target": "Package",
               "version": "[2.1.7, )"
